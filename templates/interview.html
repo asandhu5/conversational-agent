@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Interview in progress — Interview Coach{% endblock %}
+{% block content %}
+
+{% if processing_only or session.status != 'live' %}
+<div class="card processing-panel" id="processing-panel" data-session-id="{{ session.id }}">
+  <div class="spinner"></div>
+  <h2>Analyzing your interview…</h2>
+  <p>This runs entirely on your machine and usually takes under a minute.</p>
+  <ul class="processing-steps">
+    <li class="active"><span class="dot"></span> Waiting for the final transcript</li>
+    <li><span class="dot"></span> Scoring sentiment &amp; emotion per answer</li>
+    <li><span class="dot"></span> Mapping competencies &amp; hard skills</li>
+    <li><span class="dot"></span> Writing your coaching report</li>
+  </ul>
+  {% if session.error %}
+  <div class="banner banner-danger" style="margin-top:24px; text-align:left;">{{ session.error }}</div>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary" style="margin-top:10px;">Back to setup</a>
+  {% endif %}
+</div>
+
+{% else %}
+<div class="room-header">
+  <div>
+    <h2 style="margin-bottom:2px;">{{ session.role_title }} — Mock Interview</h2>
+    <span class="badge badge-live"><span class="dot dot-pulse"></span> Live</span>
+  </div>
+  <div class="timer" id="timer">--:--</div>
+</div>
+
+<div class="video-frame">
+  <iframe id="call-frame" src="{{ session.conversation_url }}" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+</div>
+
+<div class="room-controls">
+  <button class="btn btn-danger" id="end-btn">End Interview</button>
+</div>
+<p style="text-align:center; margin-top:14px; font-size:0.82rem;">The call ends automatically when the timer runs out. Your report will be ready right after.</p>
+
+<div id="processing-panel" class="card processing-panel" data-session-id="{{ session.id }}" style="display:none; margin-top:24px;">
+  <div class="spinner"></div>
+  <h2>Analyzing your interview…</h2>
+  <p>This runs entirely on your machine and usually takes under a minute.</p>
+  <ul class="processing-steps">
+    <li class="active"><span class="dot"></span> Waiting for the final transcript</li>
+    <li><span class="dot"></span> Scoring sentiment &amp; emotion per answer</li>
+    <li><span class="dot"></span> Mapping competencies &amp; hard skills</li>
+    <li><span class="dot"></span> Writing your coaching report</li>
+  </ul>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block scripts %}
+<script>
+  window.__SESSION__ = {
+    id: {{ session.id | tojson }},
+    status: {{ session.status | tojson }},
+    durationSeconds: {{ session.duration_seconds | tojson }},
+    reportUrl: {{ url_for('report', session_id=session.id) | tojson }},
+    endUrl: {{ url_for('api_end', session_id=session.id) | tojson }},
+    statusUrl: {{ url_for('api_status', session_id=session.id) | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/interview.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}New Interview — Interview Coach{% endblock %}
+{% block content %}
+
+<div class="hero">
+  <h1>Practice your next interview<br><span class="gradient-text">with an AI that talks back.</span></h1>
+  <p class="lede">A live video interview powered by Tavus, then an instant coaching report: sentiment, emotion, competency coverage, and skill-by-skill feedback.</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><h4>Set up</h4><p>Pick a role, a candidate name, and how long you want to talk.</p></div>
+    <div class="step"><div class="step-num">2</div><h4>Talk it out</h4><p>A live AI interviewer asks questions over video, just like the real thing.</p></div>
+    <div class="step"><div class="step-num">3</div><h4>Get coached</h4><p>An automatic dashboard breaks down every answer the moment you hang up.</p></div>
+  </div>
+</div>
+
+{% if not config.tavus_configured %}
+<div class="banner banner-warning">
+  <strong>Tavus isn't configured yet.</strong> Add <code>TAVUS_API_KEY</code> and <code>TAVUS_REPLICA_ID</code> to your <code>.env</code> file and restart the app to run live interviews. See <code>README.md</code> for how to get these.
+  {% if has_demo %} In the meantime, <a href="{{ url_for('demo') }}" class="gradient-text" style="font-weight:700;">view a sample report →</a>{% endif %}
+</div>
+{% elif not config.openai_configured %}
+<div class="banner banner-info">
+  <strong>Running in local-analysis mode.</strong> Sentiment, emotion and competency scoring all work fully offline. Add an <code>OPENAI_API_KEY</code> to <code>.env</code> to also unlock AI-written per-answer coaching and a full evaluation summary.
+</div>
+{% endif %}
+
+<form id="setup-form" class="card">
+  <div class="card-title"><h3>Interview setup</h3></div>
+
+  <div class="field">
+    <label>Role</label>
+    <div class="role-grid" id="role-grid">
+      {% for key, (title, desc) in roles.items() %}
+      <label class="role-card {{ 'selected' if loop.first else '' }}" data-role="{{ key }}">
+        <input type="radio" name="role" value="{{ key }}" {{ 'checked' if loop.first else '' }}>
+        <div class="role-name">{{ title }}</div>
+        <div class="role-desc">{{ desc[:58] }}…</div>
+      </label>
+      {% endfor %}
+      <label class="role-card" data-role="custom">
+        <input type="radio" name="role" value="custom">
+        <div class="role-name">Custom</div>
+        <div class="role-desc">Write your own interviewer prompt.</div>
+      </label>
+    </div>
+  </div>
+
+  <div id="custom-fields" style="display:none;">
+    <div class="field">
+      <label for="custom_role_title">Custom role title</label>
+      <input type="text" id="custom_role_title" placeholder="e.g. Senior Backend Engineer">
+    </div>
+    <div class="field">
+      <label for="custom_prompt">Interviewer instructions</label>
+      <textarea id="custom_prompt" placeholder="You are interviewing the candidate for a ... role. Ask about ..."></textarea>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="candidate_name">Your name (optional)</label>
+      <input type="text" id="candidate_name" placeholder="e.g. Alex">
+    </div>
+    <div class="field">
+      <label for="duration_minutes">Duration</label>
+      <select id="duration_minutes">
+        <option value="3">3 minutes</option>
+        <option value="5" selected>5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="form-error" class="banner banner-danger" style="display:none;"></div>
+
+  <button type="submit" class="btn btn-primary btn-block" id="start-btn" {{ 'disabled' if not config.tavus_configured else '' }}>
+    Start Interview
+  </button>
+  {% if has_demo %}
+  <a href="{{ url_for('demo') }}" class="btn btn-secondary btn-block" style="margin-top:10px;">View a Sample Report Instead</a>
+  {% endif %}
+</form>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/setup.js') }}"></script>
+{% endblock %}

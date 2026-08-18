@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}History — Interview Coach{% endblock %}
+{% block content %}
+
+<h2 style="margin-bottom:20px;">Past Interviews</h2>
+
+{% if not sessions %}
+<div class="card empty-state">
+  <h3>No interviews yet</h3>
+  <p>Start your first mock interview and it'll show up here.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-primary">New Interview</a>
+</div>
+{% else %}
+<div class="session-grid">
+  {% for s in sessions %}
+  <a class="session-card" href="{{ url_for('report', session_id=s.id) if s.status == 'ready' else url_for('interview', session_id=s.id) }}">
+    <span class="badge badge-{{ s.status }}"><span class="dot {{ 'dot-pulse' if s.status == 'live' else '' }}"></span> {{ s.status | title }}</span>
+    {% if s.source == 'demo' %}<span class="badge badge-demo" style="margin-left:6px;">Sample</span>{% endif %}
+    <div class="session-title" style="margin-top:10px;">{{ s.role_title }}</div>
+    <div class="session-date">{{ s.candidate_name }} · {{ s.created_at[:10] if s.created_at else '' }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

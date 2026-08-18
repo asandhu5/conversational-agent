@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}{{ session.role_title }} Report — Interview Coach{% endblock %}
+{% block content %}
+
+<div class="report-header">
+  <div>
+    <span class="badge {{ 'badge-demo' if session.source == 'demo' else 'badge-ready' }}">
+      <span class="dot"></span> {{ 'Sample Report' if session.source == 'demo' else 'Report Ready' }}
+    </span>
+    <h1>{{ session.role_title }}</h1>
+    <div class="report-meta">
+      {{ session.candidate_name }} · {{ session.created_at[:10] if session.created_at else '' }} ·
+      {{ analysis.exchanges | length }} question{{ 's' if analysis.exchanges | length != 1 else '' }} answered
+    </div>
+  </div>
+  <div class="report-actions">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('export_report', session_id=session.id) }}">Download Report (.md)</a>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('export_transcript', session_id=session.id) }}">Download Transcript</a>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('index') }}">New Interview</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-tile">
+    <div class="stat-label">Questions Answered</div>
+    <div class="stat-value">{{ analysis.exchanges | length }}</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-label">Avg. Answer Length</div>
+    <div class="stat-value" id="stat-avg-words">–</div>
+    <div class="stat-sub">words per answer</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-label">You Spoke</div>
+    <div class="stat-value" id="stat-talk-pct">–</div>
+    <div class="stat-sub">of total conversation</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-label">Overall Tone</div>
+    <div class="stat-value" id="stat-tone">–</div>
+    <div class="stat-sub">{{ (analysis.overall_positivity * 100) | round | int }}% positivity score</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-label">Coaching Engine</div>
+    <div class="stat-value" style="font-size:1.1rem;">{{ 'AI-Powered' if analysis.ai_powered else 'Local' }}</div>
+    <div class="stat-sub">{{ analysis.models_used.coaching }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><h3>Coach's Summary</h3></div>
+  <div class="markdown-body" id="ai-summary"></div>
+</div>
+
+<div class="chart-grid">
+  <div class="card">
+    <div class="card-title"><h3>Sentiment Over the Interview</h3></div>
+    <div class="chart-box"><canvas id="chart-sentiment"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><h3>Talk-Time Split</h3></div>
+    <div class="chart-box"><canvas id="chart-talktime"></canvas></div>
+  </div>
+</div>
+
+<div class="chart-grid-3">
+  <div class="card">
+    <div class="card-title"><h3>Emotion Breakdown</h3></div>
+    <div class="chart-box"><canvas id="chart-emotion"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><h3>Competencies Covered</h3></div>
+    <div class="chart-box"><canvas id="chart-competency"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><h3>Hard Skills Detected</h3></div>
+    <div class="chip-row">
+      {% for skill in analysis.hard_skills %}
+      <span class="chip chip-accent">{{ skill }}</span>
+      {% else %}
+      <span class="chip">None detected</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><h3>Question-by-Question Breakdown</h3></div>
+  <div id="qa-list">
+    {% for ex in analysis.exchanges %}
+    <div class="qa-item">
+      <div class="qa-question" data-toggle>
+        <span><span class="qa-num">Q{{ ex.index + 1 }}</span>{{ ex.question }}</span>
+        <span class="qa-tags">
+          <span class="chip">{{ ex.emotion_label }}</span>
+          <span class="chev">▾</span>
+        </span>
+      </div>
+      <div class="qa-body">
+        <div class="qa-answer">{{ ex.answer }}</div>
+        <div class="qa-meta-row">
+          <span class="chip">{{ ex.sentiment_label|title }} ({{ (ex.sentiment_score * 100) | round | int }}%)</span>
+          <span class="chip">{{ ex.word_count }} words</span>
+          {% for c in ex.competencies %}<span class="chip chip-accent">{{ c }}</span>{% endfor %}
+        </div>
+        {% if ex.note %}<div class="qa-note">⚠ {{ ex.note }}</div>{% endif %}
+        {% if ex.ai_feedback %}<div class="qa-feedback">💡 {{ ex.ai_feedback }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  window.__ANALYSIS__ = {{ analysis | tojson }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+{% endblock %}
