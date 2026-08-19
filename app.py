@@ -63,7 +63,7 @@ def index():
 def api_start():
     if not config.tavus_configured:
         return jsonify({
-            "error": "Tavus isn't configured yet. Add TAVUS_API_KEY and TAVUS_REPLICA_ID to your .env file, then restart the app."
+            "error": "Live interviews aren't configured yet. Add your credentials to your .env file, then restart the app."
         }), 400
 
     payload = request.get_json(force=True, silent=True) or {}

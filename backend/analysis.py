@@ -165,7 +165,7 @@ def _positivity(sentiment_label: str, sentiment_score: float) -> float:
 
 def _get_openai_client(api_key: str):
     from openai import OpenAI
-    return OpenAI(api_key=api_key)
+    return OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
 
 
 def _fallback_hard_skills(exchanges: list[Exchange]) -> list[str]:
@@ -232,8 +232,8 @@ def _fallback_summary(exchanges: list[Exchange], hard_skills: list[str]) -> str:
         f"{avg_words:.0f} words per answer.\n\n"
         f"**Strengths**\n\n- Engaged with every question asked\n"
         f"- Touched on: {', '.join(hard_skills[:5]) or 'the topics discussed'}\n\n"
-        "**Areas to Improve**\n\n- Add an `OPENAI_API_KEY` to `.env` to unlock AI-generated, "
-        "answer-specific coaching feedback and a real evaluation here — this is a rule-based "
+        "**Areas to Improve**\n\n- Add a coaching key to `.env` to unlock AI-generated, "
+        "answer-specific coaching feedback and a real evaluation here — this is a built-in "
         "placeholder.\n\n"
         "**Suggested Next Steps**\n\n"
         "- Structure answers with the STAR method (Situation, Task, Action, Result) for more concrete impact."

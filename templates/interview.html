@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Interview in progress — Interview Coach{% endblock %}
+{% block body_class %}{{ 'call-fullscreen' if (not processing_only and session.status == 'live') else '' }}{% endblock %}
 {% block content %}
 
 {% if processing_only or session.status != 'live' %}
@@ -20,22 +21,24 @@
 </div>
 
 {% else %}
-<div class="room-header">
-  <div>
-    <h2 style="margin-bottom:2px;">{{ session.role_title }} — Mock Interview</h2>
-    <span class="badge badge-live"><span class="dot dot-pulse"></span> Live</span>
+<div class="call-stage">
+  <div class="call-overlay call-overlay-top">
+    <div>
+      <h2>{{ session.role_title }} — Mock Interview</h2>
+      <span class="badge badge-live"><span class="dot dot-pulse"></span> Live</span>
+    </div>
+    <div class="timer" id="timer">--:--</div>
   </div>
-  <div class="timer" id="timer">--:--</div>
-</div>
 
-<div class="video-frame">
-  <iframe id="call-frame" src="{{ session.conversation_url }}" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
-</div>
+  <div class="video-frame">
+    <iframe id="call-frame" src="{{ session.conversation_url }}" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+  </div>
 
-<div class="room-controls">
-  <button class="btn btn-danger" id="end-btn">End Interview</button>
+  <div class="call-overlay call-overlay-bottom">
+    <button class="btn btn-danger" id="end-btn">End Interview</button>
+    <p class="call-hint">The call ends automatically when the timer runs out. Your report will be ready right after.</p>
+  </div>
 </div>
-<p style="text-align:center; margin-top:14px; font-size:0.82rem;">The call ends automatically when the timer runs out. Your report will be ready right after.</p>
 
 <div id="processing-panel" class="card processing-panel" data-session-id="{{ session.id }}" style="display:none; margin-top:24px;">
   <div class="spinner"></div>

@@ -41,9 +41,8 @@
     <div class="stat-sub">{{ (analysis.overall_positivity * 100) | round | int }}% positivity score</div>
   </div>
   <div class="stat-tile">
-    <div class="stat-label">Coaching Engine</div>
-    <div class="stat-value" style="font-size:1.1rem;">{{ 'AI-Powered' if analysis.ai_powered else 'Local' }}</div>
-    <div class="stat-sub">{{ analysis.models_used.coaching }}</div>
+    <div class="stat-label">Coaching Style</div>
+    <div class="stat-value" style="font-size:1.1rem;">{{ 'AI-Powered' if analysis.ai_powered else 'Built-in' }}</div>
   </div>
 </div>
 

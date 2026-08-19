@@ -32,7 +32,7 @@ def test_analyze_interview_without_openai_key_uses_fallbacks(raw_conversation_1,
     assert result.ai_powered is False
     assert len(result.exchanges) == len(exchanges)
     assert all(ex.ai_feedback is None for ex in result.exchanges)
-    assert "OPENAI_API_KEY" in result.summary  # honest fallback text, not fabricated AI content
+    assert "coaching key" in result.summary  # honest fallback text, not fabricated AI content
     assert result.hard_skills  # keyword fallback still finds something or a sane default
     assert 0.0 <= result.overall_positivity <= 1.0
     assert result.interviewer_words > 0 and result.candidate_words > 0

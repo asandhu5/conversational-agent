@@ -25,7 +25,7 @@ class ConversationHandle:
 class TavusClient:
     def __init__(self, api_key: str, base_url: str = "https://tavusapi.com/v2", timeout: int = 15):
         if not api_key:
-            raise TavusAuthError("No Tavus API key configured. Set TAVUS_API_KEY in .env.")
+            raise TavusAuthError("No key configured for live interviews. Set it in .env.")
         self._base_url = base_url.rstrip("/")
         self._timeout = timeout
         self._session = requests.Session()
@@ -35,7 +35,7 @@ class TavusClient:
         """Raises TavusAuthError/TavusError if the key can't be used."""
         resp = self._session.get(f"{self._base_url}/replicas", timeout=self._timeout)
         if resp.status_code == 401:
-            raise TavusAuthError("Tavus rejected the API key (401 Unauthorized). Double-check TAVUS_API_KEY.")
+            raise TavusAuthError("The configured key was rejected (401 Unauthorized). Double-check it in .env.")
         resp.raise_for_status()
 
     def create_conversation(
@@ -97,11 +97,11 @@ class TavusClient:
 
     def _raise_for_tavus_error(self, resp: requests.Response) -> None:
         if resp.status_code == 401:
-            raise TavusAuthError("Tavus rejected the API key (401 Unauthorized).")
+            raise TavusAuthError("The configured key was rejected (401 Unauthorized).")
         if not resp.ok:
             detail = ""
             try:
                 detail = resp.json().get("message", "")
             except ValueError:
                 detail = resp.text[:300]
-            raise TavusError(f"Tavus API error {resp.status_code}: {detail or 'no further detail returned'}")
+            raise TavusError(f"The interview service returned an error ({resp.status_code}): {detail or 'no further detail returned'}")

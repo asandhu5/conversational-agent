@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 <nav class="topnav">
   <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark"></span>Interview Coach</a>
   <div class="nav-links">
@@ -22,7 +22,7 @@
 {% block content %}{% endblock %}
 </main>
 <footer class="site-footer">
-  Powered by the Tavus Conversational Video Interface. Sentiment &amp; emotion analysis run locally on your machine.
+  Every session is analyzed automatically the moment you hang up — your coaching report follows right after.
 </footer>
 {% block scripts %}{% endblock %}
 </body>

@@ -4,7 +4,7 @@
 
 <div class="hero">
   <h1>Practice your next interview<br><span class="gradient-text">with an AI that talks back.</span></h1>
-  <p class="lede">A live video interview powered by Tavus, then an instant coaching report: sentiment, emotion, competency coverage, and skill-by-skill feedback.</p>
+  <p class="lede">A live video interview, then an instant coaching report: sentiment, emotion, competency coverage, and skill-by-skill feedback.</p>
 
   <div class="steps">
     <div class="step"><div class="step-num">1</div><h4>Set up</h4><p>Pick a role, a candidate name, and how long you want to talk.</p></div>
@@ -15,12 +15,12 @@
 
 {% if not config.tavus_configured %}
 <div class="banner banner-warning">
-  <strong>Tavus isn't configured yet.</strong> Add <code>TAVUS_API_KEY</code> and <code>TAVUS_REPLICA_ID</code> to your <code>.env</code> file and restart the app to run live interviews. See <code>README.md</code> for how to get these.
+  <strong>Live interviews aren't set up yet.</strong> Add your credentials to <code>.env</code> and restart the app to run live interviews. See <code>README.md</code> for setup steps.
   {% if has_demo %} In the meantime, <a href="{{ url_for('demo') }}" class="gradient-text" style="font-weight:700;">view a sample report →</a>{% endif %}
 </div>
 {% elif not config.openai_configured %}
 <div class="banner banner-info">
-  <strong>Running in local-analysis mode.</strong> Sentiment, emotion and competency scoring all work fully offline. Add an <code>OPENAI_API_KEY</code> to <code>.env</code> to also unlock AI-written per-answer coaching and a full evaluation summary.
+  <strong>Running with built-in analysis.</strong> Sentiment, emotion, and competency scoring all work automatically. Add a key to <code>.env</code> to also unlock AI-written per-answer coaching and a full evaluation summary.
 </div>
 {% endif %}
 

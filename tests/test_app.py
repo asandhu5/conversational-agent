@@ -51,7 +51,7 @@ def test_unknown_session_redirects_to_index(client):
 def test_api_start_without_tavus_config_returns_400(client, unconfigured_tavus):
     resp = client.post("/api/start", json={"role": "ml-engineer", "candidate_name": "Alex"})
     assert resp.status_code == 400
-    assert "Tavus isn't configured" in resp.get_json()["error"]
+    assert "aren't configured" in resp.get_json()["error"]
 
 
 def test_report_renders_for_seeded_session(client, seeded_demo_session):

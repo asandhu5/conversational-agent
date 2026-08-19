@@ -3,7 +3,6 @@
   const timerEl = document.getElementById("timer");
   const endBtn = document.getElementById("end-btn");
   const processingPanel = document.getElementById("processing-panel");
-  const callFrame = document.getElementById("call-frame");
 
   let remaining = session.durationSeconds;
   let countdownHandle = null;
@@ -28,12 +27,8 @@
   }
 
   function showProcessing() {
-    if (callFrame) callFrame.closest(".video-frame")?.remove();
-    document.querySelector(".room-header")?.remove();
-    document.querySelector(".room-controls")?.remove();
-    document.querySelectorAll("p").forEach((p) => {
-      if (p.textContent.includes("ends automatically")) p.remove();
-    });
+    document.querySelector(".call-stage")?.remove();
+    document.body.classList.remove("call-fullscreen");
     if (processingPanel) processingPanel.style.display = "block";
     startPolling();
   }
@@ -46,9 +41,9 @@
     try {
       await fetch(session.endUrl, { method: "POST" });
     } catch (err) {
-      // The background worker on the server keeps polling Tavus regardless,
-      // so a failed request here just means the "please hold" screen takes
-      // a little longer to appear -- not a dead end.
+      // The background worker on the server keeps polling regardless, so a
+      // failed request here just means the "please hold" screen takes a
+      // little longer to appear -- not a dead end.
       console.warn("Failed to explicitly end the call, waiting on the server instead.", err);
     }
     clearInterval(countdownHandle);
