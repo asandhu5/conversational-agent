@@ -24,10 +24,7 @@ evaluation.
    skills, and a per-question accordion with coaching notes. Export the
    transcript or the full report as Markdown.
 
-Sentiment and emotion analysis run **entirely on your machine** (local
-HuggingFace models) — no answer data leaves your computer unless you've
-added an OpenAI key for the coaching-feedback layer, and even then only the
-transcript text is sent, never audio/video.
+
 ---
 ## Demo
 
